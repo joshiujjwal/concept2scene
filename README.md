@@ -86,3 +86,30 @@ GET  /health                   — Health check
 - Keep PRs small and focused — one feature or fix per PR
 - Update `CLAUDE.md` / `AGENTS.md` if you discover non-obvious conventions
 - No unreviewed AI-generated code merged without human inspection of the diff
+
+---
+
+## 🚀 Improvement Proposals
+
+### First-Principles Analysis
+
+- **The core value is conquering the blank page, not finishing the script.** Screenwriters don't need AI to write their story — they need a fast, low-stakes starting point. The output quality bar is "good enough to react to," not "good enough to shoot."
+- **LLM-generated scripts have a homogeneous voice.** Without style controls, every generated scene will sound like a mid-budget drama; this makes the tool useful once but boring on repeated use.
+- **The `refine` endpoint is the most important endpoint.** Creative work is iterative; the generate → feedback → refine loop is where real value is created, and it needs more design attention than the initial generation.
+- **There is no state continuity.** Each scene generation is stateless; a feature film needs scene-to-scene character and tone consistency that a single-endpoint API cannot provide.
+
+### Key Risks & Assumptions
+
+- **Input specificity variance:** abstract inputs ("loneliness") produce wildly different quality than specific inputs ("a soldier returning home to find his town changed"); no guidance or prompt engineering exists to help users get better inputs.
+- **Output format correctness:** screenplay format has strict conventions (slug lines, action blocks, parentheticals) — a single formatting error makes the output look amateurish to professionals.
+- **LLM cost per generation:** a polished scene may require 1,000–2,000 output tokens; at scale or with heavy refinement loops, API costs can be significant.
+- **No export path:** the API returns markdown/text, but screenwriters need Final Draft (.fdx), PDF, or at minimum proper Fountain format.
+
+### Concrete Improvement Ideas
+
+1. **Add genre and tone presets** (noir, psychological thriller, romantic comedy, Tarantino-esque) as a required or optional request parameter; presets inject style constraints into the prompt and dramatically increase output variety and quality. (Highest impact on reuse and delight.)
+2. **Implement a character registry for multi-scene projects** — let users define characters (name, voice, backstory) that persist across multiple `generate` and `refine` calls, enabling consistent character voice across a script.
+3. **Add Fountain format export** — Fountain is the plain-text screenwriting standard; outputting valid Fountain means the scene can be imported into Final Draft, Highland, or Fade In immediately.
+4. **Build a web UI with a split-pane editor** — left pane shows the generated scene in formatted screenplay style, right pane has a feedback input and a "refine" button; this is the natural UX for iterative creative work and removes the need for curl/API clients.
+5. **Add input quality guidance** — analyze the concept input before generation and return a short "your concept is very abstract — consider adding [character, conflict, setting]" prompt to help users get better outputs.
+
